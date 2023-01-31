@@ -1,1 +1,1 @@
-![PDF](Novelty-Detection-Report.pdf)
+![PDF](imgs/Novelty-Detection-Report-DISPL.jpg)
