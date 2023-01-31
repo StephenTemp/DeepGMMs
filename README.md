@@ -1,31 +1,28 @@
 # Deep Gaussian Mixture Models
 
-### STEPHEN SCARANO, Yi Wei; University of Massachusetts, Amherst, USA
+### STEPHEN SCARANO, YI WEI; University of Massachusetts, Amherst, USA
 
 **Abstract:** The last decade has witnessed tremendous progress in
 deep learning classification tasks; however, these models often rely on a notable “closed-set assumption”: that classes observed in test-time are a subset of those observed during train-time. We present a new method, called Novel-Net, which integrates Gaussian Mixture Models into an arbitrary deep network architecture to discriminate instances not seen during training time. Our model consistently outperforms conventional techniques such as Nearest-Class Mean and Model Confidence, boosting accuracy by 12% in binary classification tasks.
 
-### 1. INTRODUCTION
+### 1. Introduction
 Image classification has made significant progress since the incorporation of Neural Network approaches. However, a common assumption many models make is that at test-time the set of classes encountered would be a subset of all the classes the model observed at train-time [5]. In other words, Neural Networks do not know what they do not know.
 
 Consider the case of an automated diagnostician agent trained on samples of k distinct pathologies. At test-time the agent should not only correctly distinguish between corresponding test samples, but ideally identify unfamiliar samples and signal caution. In this example, the agent’s ability to identify novel samples could make the difference in discovering a new variant of a highly infectious virus, or simply avoiding a diagnosis with incomplete information. For high-risk deployment, machine learning models must competently acknowledge their limits and drop the assumption that classes seen at test-time are a subset of those observed during train-time.
 
 We are not the first to consider the problem of Open Set Recognition (OSR), and benefit from work spanning both traditional ML and deep learning disciplines. In that spirit, we integrate deep learning architectures with Gaussian Mixture Models (GMMs), which fit inputs to a predetermined number of normal distributions. We opt for GMMs since they have an intuitive notion of distance which still preserves complex relationships in the data. For clarification,consider the scenario shown in Figure 1.
 
-### 2. RELATED WORK
+### 2. Related Work
 
+Gaussian Mixture Models are by no means universal approximators [8], but their descriptive flexibility exceeds that of a strict K-Means method [18]. In addition, their decisions are fundamentally explainable, which may be prioritized in high-impact contexts. The greatest theoretical hurdle—and the crux of our work here—is whether the feature space can be meaningfully approximated by a computationally acceptable number of Gaussian clusters.
+In short, we seek to identify and reject samples from some novel class, _N_, ideally without compromising model performance. For the sake of this paper, we consider perfor- mance in terms of standard accuracy and measure detection of _N_ by novel-class recall.
 
-### 3. APPROACH
+Reviews of Open Set Recognition (OSR) and Open World Learning (OWL) typically partition the input space into four quadrants [6, 9, 17]:
+    - _Known-known classes_ (KKCs): traditional data samples, seen at train time and exemplify one of k classes.
+    - _Known-unknown classes_ (KUCs): negative data samples defined by a lack of positive instances from other classes; i.e, background classes (think object detec- tion [10]).
+    - _Unknown-known classes_ (UKCs): Classes with no available data samples during training, but with avail- able semantic information.
+    - _Unknown-unknown classes_ (UUCs): Classes not encountered during training and also lack semantic in- formation. Essentially, these are data instances that are completely unexpected.
 
-I intend to evaluate differing visual geolocation approaches by comparative analysis. Each of the trials (Conventional Macro-Classification (CMC), Panoramic Macro-Classification (PMC), Local-Regression (LR), Partitioned Local-Classification (PLC), and Clustered Local-Classification (CLC)) described in further detail below are applied to a publicly available Google Street-View dataset provided by the _Center for Research in Computer Vision_[7]. The set of nearly 63,000 images contains roughly 13,000 points in space which each correspond to 5 perspective images; which together comprise a 360◦ view (excluding downward) from each spot. The placemarks are split relatively evenly between Pittsburgh, PA, Orlando, FL, and downtown Manhattan, NY, with a slight bias in favor of the former two cities. In addition, we execute these approaches utilizing an identical CNN architecture as described in Table 1; however, particular approaches necessitate slight accommodations: For instance, local regression follows its _Linear_ layer with an _L1_ Loss function in place of _Softmax_, and Panoramic Macro-Classification takes input dimensions of double the conventional width. All of these changes will be listed in detail in the Experiment section below. Instead, this section lists my intuitions for each approach.
-
-
-#### 3.1. Conventional Macro-Classification
-Conventional Macro-Classification intends to discriminate between two or more distinct areas of interest—in the case of the following experiments, Orlando and Pittsburgh. This approach benefits from both a simple solution space (two classes) and, potentially, the clearest inputs to classify. Distinct locations share distinct histories, often translating into divergent skylines and architectural trends, but we must also be keen to less impressive features of interest as well: differing climates may translate into differing levels of sunlight which to our model may be an easy tell. If our interest is to separate locations by natural or architectural detail as in previous research, we must be careful to considerallpossible divergences between the input pixel values [2].
-
-
-#### 3.2. Panoramic Macro-Classification
-Panoramic Macro-Classification builds upon CMC with additional benefits and drawbacks. By appending two or more perspectives from the same point, we essentially provide our model a "human view" at that point in space. In real terms, we increase the descriptive potential of each instance—at the cost of the training set size; yet even dismissing the increase to the feature-space, appending images may aid to combatdud imageswhich provide very little information (say, the side of a wall). One potential work-around to the halved training set size could be a reverse-appending of each instance.
 
 ![Panoramic Instance](./figures/fig_2.png)
 ```
