@@ -86,7 +86,7 @@ Subsequent to the search, we must identify a maximum distance from the closest c
 
 | ![](imgs/threhs-1.jpeg) | ![](imgs/threhs-1.5.jpeg) |
 |----------------------------|--------------------------|
-| ![](imgs/threhs-2.jpeg.jpeg) | ![](imgs/threhs-4.jpeg)  |
+| ![](imgs/threhs-2.jpeg) | ![](imgs/threhs-4.jpeg)  |
 
    
 
