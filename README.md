@@ -18,10 +18,11 @@ Gaussian Mixture Models are by no means universal approximators [8], but their d
 In short, we seek to identify and reject samples from some novel class, _N_, ideally without compromising model performance. For the sake of this paper, we consider perfor- mance in terms of standard accuracy and measure detection of _N_ by novel-class recall.
 
 Reviews of Open Set Recognition (OSR) and Open World Learning (OWL) typically partition the input space into four quadrants [6, 9, 17]:
-    - _Known-known classes_ (KKCs): traditional data samples, seen at train time and exemplify one of k classes.
-    - _Known-unknown classes_ (KUCs): negative data samples defined by a lack of positive instances from other classes; i.e, background classes (think object detec- tion [10]).
-    - _Unknown-known classes_ (UKCs): Classes with no available data samples during training, but with avail- able semantic information.
-    - _Unknown-unknown classes_ (UUCs): Classes not encountered during training and also lack semantic in- formation. Essentially, these are data instances that are completely unexpected.
+
+- _Known-known classes_ (KKCs): traditional data samples, seen at train time and exemplify one of k classes.
+- _Known-unknown classes_ (KUCs): negative data samples defined by a lack of positive instances from other classes; i.e, background classes (think object detec- tion [10]).
+- _Unknown-known classes_ (UKCs): Classes with no available data samples during training, but with avail- able semantic information.
+- _Unknown-unknown classes_ (UUCs): Classes not encountered during training and also lack semantic in- formation. Essentially, these are data instances that are completely unexpected.
 
 
 ![Panoramic Instance](./figures/fig_2.png)
