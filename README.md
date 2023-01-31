@@ -84,11 +84,11 @@ Prior to train-time, we specify a max search-space of Gaussian components availa
 
 Subsequent to the search, we must identify a maximum distance from the closest cluster, denoted $\delta$, allowable to deem an instance familiar. Over a holdout set including novel samples, we calculate the mahalanobis distance between each sample and its closest cluster as determined by G. Next, we perform a second coarse search over the interval $ [\delta_min , \delta_max ] $ where $\delta_min$ , $\delta_max$ are the minimum and maximum standard deviations encountered. Our experiments in Section 4 partition this range into 1000 equidistant values for search. After performing classification with our model, the threshold $ \delta \in [\delta_min , \delta_max ]$ that produces the highest metric of choice (we use standard accuracy) is adopted as the model distance threshold.
 
+| ![](imgs/threhs-1.jpeg) | ![](imgs/threhs-1.5.jpeg) |
+|----------------------------|--------------------------|
+| ![](imgs/threhs-2.jpeg.jpeg) | ![](imgs/threhs-4.jpeg)  |
 
-| :---                 |     ---:                        |      
-| ![](imgs/threhs-1.jpeg)|![](imgs/threhs-1.5.jpeg)      | 
-| ![](imgs/threhs-2.jpeg.jpeg)|  ![](imgs/threhs-4.jpeg) |
-| :---                 |     ---:                        |      
+   
 
 ```
 Figure 4. Example of increasing the distance threshold across the domain, where green points are UUC instances
