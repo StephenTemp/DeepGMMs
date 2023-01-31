@@ -33,16 +33,32 @@ Reviews of Open Set Recognition (OSR) and Open World Learning (OWL) typically pa
 - _Unknown-unknown classes_ (UUCs): Classes not encountered during training and also lack semantic in- formation. Essentially, these are data instances that are completely unexpected.
 
 
+Our work largely ignores UKCs which are a focus in Zero-Shot Learning: a process which leverages similari- ties between KKC and UKC attributes to classify UKC in- stances [6, 19]. Rather, our approach leverages contrasts between KKC and UUC attributes to discriminate the lat- ter samples; i.e, that known class features and unknown class features will be notably distinct. On first glance, OSR resembles prior work on classification with a reject option [6, 7]; however, these frameworks still operate un- der the closed-set assumption—that all instance classes are seen during train-time (KKCs).
+Since there is substantial overlap between model confi- dence and OSR, we review common methods here. These techniques can be organized into ambiguity-based and dis- tance-based frameworks [7]. Ambiguity-methods reject in- stances whose model probability outputs are within some δ distance from one another [14], as shown in Figure 2.
+The problem is formally defined assuming a predeter- mined reject-penalty, d, and probability function η [7]:
+
+![Equation](./imgs/equations.png)
+
+Conversely, Distance-methods reject samples by thresh- olding some notion of distance between instances and target classes [6, 14]. As the authors mention in [6], empirically setting a threshold value inherently relies upon information determined from KKCs at train-time, which jeopardizes our generalizability to UUCs at test-time. Current approaches take inspiration from the k-nearest neighbors algorithm: classes are represented as a concatenation of all corresponding positive samples, which while computationally infeasible performs comparable to state-of-the-art methods [6, 15]. The authors of [15] introduce a similarly-inspired Nearest-Class-Mean (NCM) classifier, which instead represents classes by the mean feature-vector (learned at train-time) of its corresponding positive samples. Both methods rely on a metric of “distance” between instances and means, implemented by the Mahalanobis distance.
+
+The Mahalanobis distance differs from Euclidean distance in that it considers the relationship between instances 195 of a distribution. For any two n-dimensional vectors, $ x_1 , x_2 as
+\in R^n $. Mahalanobis distance can be computed as
+
+$$ d(x_1, x_2) = \sqrt{(x_1 - x_2)^T C^{-1} (x_1 - x_2)} $$
+
+
 ![Panoramic Instance](./figures/fig_2.png)
 ```
 Fig. 2. Example of a PMC instance appending two perspectives from the same image 
 ```
 
-#### 3.3. Local Regression
-In Local Regression, we perform regression on the image’s point-coordinates. Research on visual geolocation is largely absent of regression problems, at least as far as neural network solutions go. My general intuitions for this are listed in the Related Works section, and I include it here primarily as a trial to contrast against other approaches.
+where C is the covariance matrix of the distribution [3]. Aside from traditional methods, recent years have witnessed novelty detection using a deep-learning approach. The authors of [2] propose a new layer, denoted Open-Max, which estimates the probability that a given instance is outside the set of KKCs. Specifically, OpenMax adapts the SoftMax layer for the OSR setting where probabilities do not necessarily sum to 1. Interestingly, OpenMax is largely an ambiguity-based method, rejecting instances whose probability outputs do not exceed a confidence value, $\epsilon$.
 
-#### 3.4. Partitioned Local-Classification
-Partitioned Local-Classification is the contemporary go-to workaround to the constraints of Local Regression. By dividing the coordinate-map of a space into discrete cells (essentially overlaying a grid), we appropriate the benefits of traditional classification without the drawbacks of a regression problem. On the downside, we might expect (depending upon our partitions) a model to struggle with the arbitrary cell dividing lines, particularly on a local scale.
+Our work consists of unsupervised learning on unlabeled data using a mixture of Gaussians. Each cluster is a multivariate Gaussian with a mean $\mu_k$ and covariance matrix $C$ such that the complete model can be described as below [16]:
+
+$$ p(x_i | \theta) = \sum_{k = 1}^{K}{\pi_k \N(x_i | \mu_k, C )} $$
+
+
 
 ![Clustered vs. Partitioned Coordinate Groupings](./figures/fig_3.png)
 ```
