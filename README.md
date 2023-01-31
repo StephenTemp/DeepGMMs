@@ -5,17 +5,18 @@
 **Abstract:** The last decade has witnessed tremendous progress in
 deep learning classification tasks; however, these models often rely on a notable “closed-set assumption”: that classes observed in test-time are a subset of those observed during train-time. We present a new method, called Novel-Net, which integrates Gaussian Mixture Models into an arbitrary deep network architecture to discriminate instances not seen during training time. Our model consistently outperforms conventional techniques such as Nearest-Class Mean and Model Confidence, boosting accuracy by 12% in binary classification tasks.
 
+| K-Means              | Gaussian Mixture Models |
+| :---                 |     ---:               |      
+| ![](imgs/KMeans-ex.jpeg)|![](imgs/GMM-ex.jpeg)| 
+```
+Figure 1. Classification of two distributions using K-Means and Gaussian Mixture Models that demonstrates the relative flexibility of the latter framework. 
+```
+
 ### 1. Introduction
 Image classification has made significant progress since the incorporation of Neural Network approaches. However, a common assumption many models make is that at test-time the set of classes encountered would be a subset of all the classes the model observed at train-time [5]. In other words, Neural Networks do not know what they do not know.
 
 Consider the case of an automated diagnostician agent trained on samples of k distinct pathologies. At test-time the agent should not only correctly distinguish between corresponding test samples, but ideally identify unfamiliar samples and signal caution. In this example, the agent’s ability to identify novel samples could make the difference in discovering a new variant of a highly infectious virus, or simply avoiding a diagnosis with incomplete information. For high-risk deployment, machine learning models must competently acknowledge their limits and drop the assumption that classes seen at test-time are a subset of those observed during train-time.
 
-| K-Means              | Gaussian Mixture Models |
-| :---                 |     ---:               |      
-| ![](imgs/KMeans-ex.jpeg)|![](imgs/GMM-ex.jpeg)| 
-```
-Figure 1. Classification of two distributions using K-Means and Gaussian \n Mixture Models that demonstrates the relative flexibility of the latter framework. 
-```
 
 We are not the first to consider the problem of Open Set Recognition (OSR), and benefit from work spanning both traditional ML and deep learning disciplines. In that spirit, we integrate deep learning architectures with Gaussian Mixture Models (GMMs), which fit inputs to a predetermined number of normal distributions. We opt for GMMs since they have an intuitive notion of distance which still preserves complex relationships in the data. For clarification,consider the scenario shown in Figure 1.
 
