@@ -13,6 +13,7 @@ Consider the case of an automated diagnostician agent trained on samples of k di
 | K-Means              | Gaussian Mixture Models |
 | :---                 |     ---:               |      
 | ![](imgs/KMeans-ex.jpeg)|![](imgs/GMM-ex.jpeg)| 
+| Figure 1. Classification of two distributions using K-Means and 096 Gaussian Mixture Models that demonstrates the relative flexibility 097 of the latter framework. |
 
 We are not the first to consider the problem of Open Set Recognition (OSR), and benefit from work spanning both traditional ML and deep learning disciplines. In that spirit, we integrate deep learning architectures with Gaussian Mixture Models (GMMs), which fit inputs to a predetermined number of normal distributions. We opt for GMMs since they have an intuitive notion of distance which still preserves complex relationships in the data. For clarification,consider the scenario shown in Figure 1.
 
