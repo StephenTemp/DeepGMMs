@@ -10,6 +10,10 @@ Image classification has made significant progress since the incorporation of Ne
 
 Consider the case of an automated diagnostician agent trained on samples of k distinct pathologies. At test-time the agent should not only correctly distinguish between corresponding test samples, but ideally identify unfamiliar samples and signal caution. In this example, the agent’s ability to identify novel samples could make the difference in discovering a new variant of a highly infectious virus, or simply avoiding a diagnosis with incomplete information. For high-risk deployment, machine learning models must competently acknowledge their limits and drop the assumption that classes seen at test-time are a subset of those observed during train-time.
 
+| K-Means              | Gaussian Mixture Models |
+| :---                 |     ---:               |      
+| ![](imgs/GMMs-ex.jpeg)|![](imgs/KMeans-ex.jpeg)| 
+
 We are not the first to consider the problem of Open Set Recognition (OSR), and benefit from work spanning both traditional ML and deep learning disciplines. In that spirit, we integrate deep learning architectures with Gaussian Mixture Models (GMMs), which fit inputs to a predetermined number of normal distributions. We opt for GMMs since they have an intuitive notion of distance which still preserves complex relationships in the data. For clarification,consider the scenario shown in Figure 1.
 
 ### 2. Related Work
