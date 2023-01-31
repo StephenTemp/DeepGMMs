@@ -41,37 +41,57 @@ The problem is formally defined assuming a predeter- mined reject-penalty, d, an
 
 Conversely, Distance-methods reject samples by thresh- olding some notion of distance between instances and target classes [6, 14]. As the authors mention in [6], empirically setting a threshold value inherently relies upon information determined from KKCs at train-time, which jeopardizes our generalizability to UUCs at test-time. Current approaches take inspiration from the k-nearest neighbors algorithm: classes are represented as a concatenation of all corresponding positive samples, which while computationally infeasible performs comparable to state-of-the-art methods [6, 15]. The authors of [15] introduce a similarly-inspired Nearest-Class-Mean (NCM) classifier, which instead represents classes by the mean feature-vector (learned at train-time) of its corresponding positive samples. Both methods rely on a metric of “distance” between instances and means, implemented by the Mahalanobis distance.
 
+
+![Architecture](imgs/pr-ambiguity.jpeg.jpeg)
+```
+Figure 3. Model probability outputs where outputs of ambiguity within $\sigma = 0.20$ are rejected
+```
+
+
 The Mahalanobis distance differs from Euclidean distance in that it considers the relationship between instances 195 of a distribution. For any two n-dimensional vectors, $ x_1 , x_2 as
 \in R^n $. Mahalanobis distance can be computed as
 
 $$ d(x_1, x_2) = \sqrt{(x_1 - x_2)^T C^{-1} (x_1 - x_2)} $$
 
 
-![Panoramic Instance](./figures/fig_2.png)
-```
-Fig. 2. Example of a PMC instance appending two perspectives from the same image 
-```
-
 where C is the covariance matrix of the distribution [3]. Aside from traditional methods, recent years have witnessed novelty detection using a deep-learning approach. The authors of [2] propose a new layer, denoted Open-Max, which estimates the probability that a given instance is outside the set of KKCs. Specifically, OpenMax adapts the SoftMax layer for the OSR setting where probabilities do not necessarily sum to 1. Interestingly, OpenMax is largely an ambiguity-based method, rejecting instances whose probability outputs do not exceed a confidence value, $\epsilon$.
 
 Our work consists of unsupervised learning on unlabeled data using a mixture of Gaussians. Each cluster is a multivariate Gaussian with a mean $\mu_k$ and covariance matrix $C$ such that the complete model can be described as below [16]:
 
-$$ p(x_i | \theta) = \sum_{k = 1}^{K}{\pi_k \N(x_i | \mu_k, C )} $$
+$$ p(x_i | \theta) = \sum_{k = 1}^{K}{\pi_k \mathcal{N}(x_i | \mu_k, C )} $$
+
+where $0 \leq \pi_k \leq 1$ are the mixing weights.
+
+The model is fit by expectation maximization, and the proper number of components can be determined apriori using either the Akaike or Bayesian information criterion [1,16]. The former metric estimates the difference in probabilistic density between the true model, $f(x)$, and our model $p(x|\theta)$, penalized by model size. Bayesian information criteria, alternatively, computes the probability that the data-generating process $p(x|\theta)$ is the true model rather than a “good” approximation. Both metrics are defined and behave similarly, so for our work we apply AIC for its comparatively speedier computation-time [13] .
 
 
+#### 3.0 Methodology 
 
-![Clustered vs. Partitioned Coordinate Groupings](./figures/fig_3.png)
+
+![Architecture](imgs/Architecture.jpeg)
 ```
-Fig. 3. Pittsburgh data instances partitioned by arbitrary boundary (left) vs. clustered grouping (right). The clustering appears to naturally group points into city outskirts and the city center.
+Figure 3. NovelNet “architecture” showing arbitrary an Neural Network and $G$ weed-out component. Dashed lines (- - -) correspond to potential forward feeds into $G$.
 ```
 
-#### 3.5 Clustered Local-Classification
-I believe Clustered Local-Classification is my largest contribution to the visual geolocation field, sharpening the rough edges of the PLC approach. Rather than choosing an arbitrary set of gridlines to divide up a local area, we instead take inspiration from the R-CNN architecture, proposing potential division lines with apriori information [3]. While the potential applications are vast, the scope of this paper will concern a K-Means clustering of points by coordinate distance. I hope to demonstrate that these "natural" division lines lay a firmer groundwork for classification.
+To tackle this problem, we propose NovelNet as a new
+approach. Figure 3 displays a high-level diagram of Novel-Net, which feeds network features into a $G$ component that identifies and re-labels novel samples. During train-time, the model is trained conventionally (SGD), and only afterwards is $G$ fit on its features. For clarity, $G$ is a conventional gaussian mixture model (GMM) used as a filter on novel points. The GMM models feature relationships seen during train-time so as to discriminate against deviant points at test-time.
+
+As shown in Figure 3, features may be extracted from any layer. In this manner, our approach draws upon model ambiguity methods, since we may choose to identify patterns directly out of the Softmax layer; however, this raises a prominent question: are unfamiliar Softmax probability relationships indicative of unfamiliar inputs? Ambiguity methods (see Section 2) compare output probabilities at face-value, strictly rejecting instances who “self-report” low confidence. In this work, we consider the probability outputs as any other feature representation. Assuming this hypothesis, we suspect that relationships determined by $G$ have more descriptive power than those conservatively estimated by ambiguity methods—that is, since $G$ models relationships dynamically rather than the former rules-based approach, it stands to leverage more information in detection tasks.
+
+##### 3.1 Training
+
+Prior to train-time, we specify a max search-space of Gaussian components available (n2 , n3 , ..., nmax ), since computation scales linearly with the number of clusters. Immediately after the network is trained, we extract features from a sample of the training set (the size of which is an ad- 289 justable hyperparameter) and perform a coarse search of the 290 number of components with respect to AIC criterion (see 291 Section 2).
+
+Subsequent to the search, we must identify a maximum distance from the closest cluster, denoted $\delta$, allowable to deem an instance familiar. Over a holdout set including novel samples, we calculate the mahalanobis distance between each sample and its closest cluster as determined by G. Next, we perform a second coarse search over the interval $ [\delta_min , \delta_max ] $ where $\delta_min$ , $\delta_max$ are the minimum and maximum standard deviations encountered. Our experiments in Section 4 partition this range into 1000 equidistant values for search. After performing classification with our model, the threshold $ \delta \in [\delta_min , \delta_max ]$ that produces the highest metric of choice (we use standard accuracy) is adopted as the model distance threshold.
 
 
-![Model Evaluations](./figures/table_2.png)
+| :---                 |     ---:                        |      
+| ![](imgs/threhs-1.jpeg)|![](imgs/threhs-1.5.jpeg)      | 
+| ![](imgs/threhs-2.jpeg.jpeg)|  ![](imgs/threhs-4.jpeg) |
+| :---                 |     ---:                        |      
+
 ```
-Table 2. Best Model Accuracy and F1 Evaluation over 10 Epochs
+Figure 4. Example of increasing the distance threshold across the domain, where green points are UUC instances
 ```
 
 ### 4. EXPERIMENTATION
